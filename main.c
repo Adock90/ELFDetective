@@ -3,6 +3,5 @@
 
 int main(int argc, char* argv[])
 {
-	exec_main(argc, argv);
-	return 0;
+	return exec_main(argc, argv);
 }
