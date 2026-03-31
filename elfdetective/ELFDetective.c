@@ -15,7 +15,7 @@ void help()
 		"\t[<file>]: The path to the file you want to inspect.\n"
 		"\t\tExample: ELFDetective /bin/bash --Header\n"
 		"\n\t[<options>]: The different headers and sections of the elf to inspect.\n"
-		"\t\tExamples: 'ELFDetective --Header' 'ELFDetective --Sections'. Even have multiple 'ELFDetective --Header --Program-Header'\n"
+		"\t\tExamples: 'ELFDetective --Header' 'ELFDetective --Section-Headers'. Even have multiple 'ELFDetective --Header --Program-Header'\n"
 	       "\t\tOptions: Include '--Header', '--Program-Header', '--Section-Headers'\n"
 	      );
 }
