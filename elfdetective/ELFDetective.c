@@ -59,7 +59,7 @@ int exec_main(int argc, char* argv[])
 			dump_64_bit_program_header(program_header);
 			bit_64_program_header_pointer_cleanup(program_header);
 		}
-		else if (is_string_in_array("--Section-Headers", argument_parsing.fetch_array) == 0)
+		if (is_string_in_array("--Section-Headers", argument_parsing.fetch_array) == 0)
 		{
 			Elf64_Shdr* section_headers = parse_64_bit_section_headers(file_handle_ptr, elf_header);
 			dump_64_bit_section_headers(file_handle_ptr, section_headers, elf_header.e_shnum, elf_header.e_shstrndx);
@@ -78,7 +78,7 @@ int exec_main(int argc, char* argv[])
 			dump_32_bit_program_header(program_header);
 			bit_32_program_header_pointer_cleanup(program_header);
 		}
-		else if (is_string_in_array("--Section-Headers", argument_parsing.fetch_array) == 0)
+		if (is_string_in_array("--Section-Headers", argument_parsing.fetch_array) == 0)
 		{
 			Elf32_Shdr* section_headers = parse_32_bit_section_headers(file_handle_ptr, bit_32_header);
 			dump_32_bit_section_headers(file_handle_ptr, section_headers, elf_header.e_shnum, elf_header.e_shstrndx);
