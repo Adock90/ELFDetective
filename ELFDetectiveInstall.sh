@@ -1,3 +1,4 @@
+#!/bin/bash
 
 DEB=0
 RED=0
