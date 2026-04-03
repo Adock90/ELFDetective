@@ -1,6 +1,10 @@
 # ELFDetective
 A Small ELF File Viewer written in C
 
+# NOTE
+
+The ELFDetectiveInstall.sh file is for release downloades or Website Downloaders ONLY
+
 # Building
 
 # 1 clone or download as zip.
