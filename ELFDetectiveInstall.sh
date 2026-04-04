@@ -106,4 +106,4 @@ git clone https://github.com/Adock90/ELFDetective
 
 cd ELFDetective/
 
-build.py
+./build.py
