@@ -9,7 +9,7 @@ The ELFDetectiveInstall.sh file is for release downloades or Website Downloaders
 
 # 1 clone or download as zip.
 
-  $git clone https://github.com/Adock90/ELFDetective
+<code>git clone https://github.com/Adock90/ELFDetective</code>
 
 # 2 run build.py
 
