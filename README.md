@@ -1,6 +1,9 @@
 # ELFDetective
 A Small ELF File Viewer written in C
 
+Compatible on POSIX based Operating Systems including: Linux, MacOS, Andriod (via <a href="https://github.com/termux">termux</a>), ChromeOS and BSD
+
+
 # NOTE
 
 The ELFDetectiveInstall.sh file is for release downloades or Website Downloaders ONLY
