@@ -33,10 +33,11 @@ The ELFDetectiveInstall.sh file is for release downloades or Website Downloaders
 For help with the program, Just run <code>./ELFDetective</code> in the terminal.
 This will provide an output like this:
 
-<code>[ELFDetective] No file specified</code>
-<code>Usage: ELFDetective [<file>] [<options>]</code>
-<code>      [<file>]: The path to the file you want to inspect.</code>
-<code>      		Example: ELFDetective /bin/bash --Header</code> 
-<code>      [<options>]: The different headers and sections of the elf to inspect.</code>
-<code>          Examples: 'ELFDetective --Header' 'ELFDetective --Sections'. Even have multiple 'ELFDetective --Header --Program-Header'</code>
-<code>          Options: Include '--Header', '--Program-Header', '--Section-Headers'</code>
+[ELFDetective] No file specified
+Usage: ELFDetective [<file>] [<options>]
+	[<file>]: The path to the file you want to inspect.
+		Example: ELFDetective /bin/bash --Header
+
+	[<options>]: The different headers and sections of the elf to inspect.
+		Examples: 'ELFDetective --Header' 'ELFDetective --Sections'. Even have multiple 'ELFDetective --Header --Program-Header'
+		Options: Include '--Header', '--Program-Header', '--Section-Headers'
