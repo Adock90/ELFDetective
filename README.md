@@ -31,13 +31,20 @@ The ELFDetectiveInstall.sh file is for release downloades or Website Downloaders
 
 <h2>Help/Manual</h2>
 For help with the program, Just run <code>./ELFDetective</code> in the terminal.
-This will provide an output like this:
+This will provide an output that will guide you.
 
-[ELFDetective] No file specified
-Usage: ELFDetective [<file>] [<options>]
-	[<file>]: The path to the file you want to inspect.
-		Example: ELFDetective /bin/bash --Header
+<h2>Check if ELF is 32 bit or 64 bit</h2>
+For checking the arch of the CPU it has been compiled for, Just run <code>./ELFDetective [Program Path]</code>
+This should output either: <code>ELF64</code> or <code>ELF32</code>.
 
-	[<options>]: The different headers and sections of the elf to inspect.
-		Examples: 'ELFDetective --Header' 'ELFDetective --Sections'. Even have multiple 'ELFDetective --Header --Program-Header'
-		Options: Include '--Header', '--Program-Header', '--Section-Headers'
+<h2>Inspect File Header</h2>
+For checking the File Header of a ELF File, Run <code>./ELFDetective [Program Path] --Header</code>
+This should output the header contents.
+
+<h2>Inspect Program Header</h2>
+For checking the Program Header of a ELF File, Run <code>./ELFDetective [Program Path] --Program-Header</code>
+This should output the program header contents.
+
+<h2>Inspect Section Headers</h2>
+For checking the Program Header of a ELF File, Run <code>./ELFDetective [Program Path] --Section-Headers</code>
+This should output the section headers contents.
