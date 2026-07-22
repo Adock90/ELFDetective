@@ -15,7 +15,7 @@ void help()
 		"\t[<file>]: The path to the file you want to inspect.\n"
 		"\t\tExample: ELFDetective /bin/bash --Header\n"
 		"\n\t[<options>]: The different headers and sections of the elf to inspect.\n"
-		"\t\tExamples: 'ELFDetective --Header' 'ELFDetective --Section-Headers'. Even have multiple 'ELFDetective --Header --Program-Header'\n"
+		"\t\tExamples: 'ELFDetective --Header' 'ELFDetective --Sections'. Even have multiple 'ELFDetective --Header --Program-Header'\n"
 	       "\t\tOptions: Include '--Header', '--Program-Header', '--Section-Headers'\n"
 	      );
 }
@@ -39,7 +39,7 @@ int exec_main(int argc, char* argv[])
 	}
 
 	FILE* file_handle_ptr = get_elf_file_handle(argument_parsing.filename);
-	Elf64_Ehdr elf_header = get_elf_header(file_handle_ptr);
+	Elf64_Ehdr elf_header = get_elf64_header(file_handle_ptr);
 	arch = check_if_elf_is_valid(elf_header);
 	if (arch.Elf64 == -1 & arch.Elf32 == -1)
 	{
@@ -51,7 +51,6 @@ int exec_main(int argc, char* argv[])
 	}
 	if (arch.Elf64 == 1 & arch.Elf32 == 0)
 	{
-		Elf64_Ehdr bit_64_header;
 		
 		if (is_string_in_array("--Program-Header", argument_parsing.fetch_array) == 0)
 		{
@@ -70,18 +69,19 @@ int exec_main(int argc, char* argv[])
 	}
 	else if (arch.Elf32 == 1 & arch.Elf64 == 0)
 	{
-		Elf32_Ehdr bit_32_header;
+		fseek(file_handle_ptr, 0, SEEK_SET);
+		Elf32_Ehdr bit_32_header = get_elf32_header(file_handle_ptr);
 		
 		if (is_string_in_array("--Program-Header", argument_parsing.fetch_array) == 0)
 		{
-			Elf32_Phdr* program_header = get_32_bit_program_header(file_handle_ptr, elf_header);
+			Elf32_Phdr* program_header = get_32_bit_program_header(file_handle_ptr, bit_32_header);
 			dump_32_bit_program_header(program_header);
 			bit_32_program_header_pointer_cleanup(program_header);
 		}
 		if (is_string_in_array("--Section-Headers", argument_parsing.fetch_array) == 0)
 		{
 			Elf32_Shdr* section_headers = parse_32_bit_section_headers(file_handle_ptr, bit_32_header);
-			dump_32_bit_section_headers(file_handle_ptr, section_headers, elf_header.e_shnum, elf_header.e_shstrndx);
+			dump_32_bit_section_headers(file_handle_ptr, section_headers, bit_32_header.e_shnum, bit_32_header.e_shstrndx);
 			bit_32_section_header_pointer_cleanup(section_headers);
 		}
 

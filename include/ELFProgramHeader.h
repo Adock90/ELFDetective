@@ -9,7 +9,7 @@
 
 Elf64_Phdr* get_64_bit_program_header(FILE* fptr, Elf64_Ehdr header);
 
-Elf32_Phdr* get_32_bit_program_header(FILE* fptr, Elf64_Ehdr header);
+Elf32_Phdr* get_32_bit_program_header(FILE* fptr, Elf32_Ehdr header);
 
 
 void dump_64_bit_program_header(Elf64_Phdr* program_header);

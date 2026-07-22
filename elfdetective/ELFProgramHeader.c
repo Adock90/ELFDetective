@@ -13,8 +13,15 @@ Elf64_Phdr* get_64_bit_program_header(FILE* fptr, Elf64_Ehdr header)
 		fclose(fptr);
 		exit(1);
 	}
+	
+	if (header.e_phnum == 0)
+	{
+		raise_elf_error("No 64 bit program header entries");
+		fclose(fptr);
+		exit(EXIT_FAILURE);
+	}
 
-	Elf64_Phdr* program_header = malloc(header.e_phentsize * header.e_phnum);
+	Elf64_Phdr* program_header = malloc((size_t)header.e_phentsize * header.e_phnum);
 	if (!program_header)
 	{
 		raise_elf_error("Failed to alloc memory for 64 bit program header table");
@@ -34,7 +41,7 @@ Elf64_Phdr* get_64_bit_program_header(FILE* fptr, Elf64_Ehdr header)
 	return program_header;
 }
 
-Elf32_Phdr* get_32_bit_program_header(FILE* fptr, Elf64_Ehdr header)
+Elf32_Phdr* get_32_bit_program_header(FILE* fptr, Elf32_Ehdr header)
 {       
         int header_table = fseek(fptr, header.e_phoff, SEEK_SET);
         if (header_table != 0)
@@ -44,7 +51,15 @@ Elf32_Phdr* get_32_bit_program_header(FILE* fptr, Elf64_Ehdr header)
                 exit(1);
         }       
         
-        Elf32_Phdr* program_header = malloc(header.e_phentsize * header.e_phnum);
+        if (header.e_phnum == 0)
+        {
+                raise_elf_error("No 64 bit program header entries");
+                fclose(fptr);
+                exit(EXIT_FAILURE);
+        }
+
+
+        Elf32_Phdr* program_header = malloc((size_t)header.e_phentsize * header.e_phnum);
         if (!program_header)
         {       
                 raise_elf_error("Failed to alloc memory for 64 bit program header table");

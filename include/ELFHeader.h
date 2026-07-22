@@ -12,7 +12,9 @@ typedef struct
 	int Elf32;
 } HeaderArch;
 
-Elf64_Ehdr get_elf_header(FILE* file_handle);
+Elf64_Ehdr get_elf64_header(FILE* file_handle);
+
+Elf32_Ehdr get_elf32_header(FILE* file_handle);
 
 HeaderArch check_if_elf_is_valid(Elf64_Ehdr header);
 

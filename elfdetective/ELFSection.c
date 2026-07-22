@@ -61,7 +61,7 @@ Elf32_Shdr* parse_32_bit_section_headers(FILE* fptr, Elf32_Ehdr bit_32_header)
 		exit(1);
 	}
 
-	if (bit_32_header.e_shentsize != sizeof(Elf64_Shdr))
+	if (bit_32_header.e_shentsize != sizeof(Elf32_Shdr))
 	{
 		raise_elf_error("Failed to verify size");
 		elf_cleanup(fptr);
@@ -90,10 +90,35 @@ Elf32_Shdr* parse_32_bit_section_headers(FILE* fptr, Elf32_Ehdr bit_32_header)
 }
 
 
+
+
 void dump_64_bit_section_headers(FILE* fptr, Elf64_Shdr* section_header, uint16_t shnum, uint16_t e_shstrndx)
 {
+	if (e_shstrndx >= shnum)
+	{
+		raise_elf_error("Section header string table index out of range");
+		elf_cleanup(fptr);
+		exit(EXIT_FAILURE);
+	}
+	
 	Elf64_Shdr section_header_strings = section_header[e_shstrndx];
-	char* section_header_string_table = malloc(section_header_strings.sh_size);
+	
+	if (fseek(fptr, 0, SEEK_END) != 0)
+	{
+		raise_elf_error("Cannot determine file size");
+		elf_cleanup(fptr);
+		exit(EXIT_FAILURE);
+	}
+	
+	long file_end = ftell(fptr);
+	if (file_end < 0 || section_header_strings.sh_offset > (uint64_t)file_end || section_header_strings.sh_size > (uint64_t)file_end - section_header_strings.sh_offset)
+	{
+		raise_elf_error("Section header string table out of file bounds");
+		elf_cleanup(fptr);
+		exit(EXIT_FAILURE);
+	}
+
+	char* section_header_string_table = calloc((section_header_strings.sh_size + 1), 1);
 	if (!section_header_string_table)
 	{
 		raise_elf_error("Cannot alloc for section name");
@@ -112,7 +137,17 @@ void dump_64_bit_section_headers(FILE* fptr, Elf64_Shdr* section_header, uint16_
 	printf("               SECTION_HEADERS               \n");
 	for (int i = 0; i < shnum; i++)
 	{
-		printf("\tName of section (sh_name): %s\n", section_header_string_table + section_header[i].sh_name);
+		char* name;
+		if (section_header[i].sh_name <= section_header_strings.sh_size)
+		{
+			name = section_header_string_table + section_header[i].sh_name;
+		}
+		else
+		{
+			name = "<invalid>";
+		}
+
+		printf("\tName of section (sh_name): %s\n", name);
 		printf("\t\tSection Content and Semantics (sh_type): %u\n", section_header[i].sh_type);
 		printf("\t\tSection Attribute Flags (sh_flags): %u\n", section_header[i].sh_flags);
 		printf("\t\tSection Memory Image Address (sh_addr): %u\n", section_header[i].sh_addr);
@@ -128,9 +163,31 @@ void dump_64_bit_section_headers(FILE* fptr, Elf64_Shdr* section_header, uint16_
 
 void dump_32_bit_section_headers(FILE* fptr, Elf32_Shdr* section_header, uint16_t shnum, uint16_t e_shstrndx)
 {
-	
+	if (e_shstrndx >= shnum)
+        {
+                raise_elf_error("Section header string table index out of range");
+                elf_cleanup(fptr);
+                exit(EXIT_FAILURE);
+        }
+
 	Elf32_Shdr section_header_strings = section_header[e_shstrndx];
-	char* section_header_string_table = malloc(section_header_strings.sh_size);
+
+        if (fseek(fptr, 0, SEEK_END) != 0)
+        {
+                raise_elf_error("Cannot determine file size");
+                elf_cleanup(fptr);
+                exit(EXIT_FAILURE);
+        }
+
+        long file_end = ftell(fptr);
+        if (file_end < 0 || section_header_strings.sh_offset > (uint64_t)file_end || section_header_strings.sh_size > (uint64_t)file_end - section_header_strings.sh_offset)
+        {
+                raise_elf_error("Section header string table out of file bounds");
+                elf_cleanup(fptr);
+                exit(EXIT_FAILURE);
+        }
+
+	char* section_header_string_table = calloc(section_header_strings.sh_size + 1, 1);
 	if (!section_header_string_table)
 	{
 		raise_elf_error("Cannot alloc for section name");
@@ -146,20 +203,30 @@ void dump_32_bit_section_headers(FILE* fptr, Elf32_Shdr* section_header, uint16_
 	
 	fread(section_header_string_table, 1, section_header_strings.sh_size, fptr);
 
-    printf("               SECTION_HEADERS               \n");
-    for (int i = 0; i < shnum; i++)
-    {
-            printf("\tName of section (sh_name): %0.8s\n", section_header->sh_name);
-            printf("\t\tSection Content and Semantics (sh_type): %u\n", section_header->sh_type);
-            printf("\t\tSection Attribute Flags (sh_flags): %u\n", section_header->sh_flags);
-            printf("\t\tSection Memory Image Address (sh_addr): %u\n", section_header->sh_addr);
-            printf("\t\tSection Offset (sh_offset): %u\n", section_header->sh_offset);
-            printf("\t\tSection Size (sh_size): %u\n", section_header->sh_size);
-            printf("\t\tSection Index Link (sh_link): %u\n", section_header->sh_link);
-            printf("\t\tExtra Information (sh_info): %u\n", section_header->sh_info);
-            printf("\t\tAddress Alignment Contraints (sh_addralign): %u\n", section_header->sh_addralign);
-            printf("\t\tEntry Size (sh_entsize): %u\n", section_header->sh_entsize);
-    }
+    	printf("[              SECTION_HEADERS             ]\n");
+    	for (int i = 0; i < shnum; i++)
+    	{
+	 	char* name;
+                if (section_header[i].sh_name <= section_header_strings.sh_size)
+                {
+                        name = section_header_string_table + section_header[i].sh_name;
+                }
+                else
+                {
+                        name = "<invalid>";
+                }
+
+            	printf("\tName of section (sh_name): %s\n", name);
+            	printf("\t\tSection Content and Semantics (sh_type): %u\n", section_header[i].sh_type);
+            	printf("\t\tSection Attribute Flags (sh_flags): %u\n", section_header[i].sh_flags);
+            	printf("\t\tSection Memory Image Address (sh_addr): %u\n", section_header[i].sh_addr);
+            	printf("\t\tSection Offset (sh_offset): %u\n", section_header[i].sh_offset);
+            	printf("\t\tSection Size (sh_size): %u\n", section_header[i].sh_size);
+            	printf("\t\tSection Index Link (sh_link): %u\n", section_header[i].sh_link);
+            	printf("\t\tExtra Information (sh_info): %u\n", section_header[i].sh_info);
+            	printf("\t\tAddress Alignment Contraints (sh_addralign): %u\n", section_header[i].sh_addralign);
+            	printf("\t\tEntry Size (sh_entsize): %u\n", section_header[i].sh_entsize);
+    	}			
 	free(section_header_string_table);
 }
 

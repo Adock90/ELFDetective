@@ -12,7 +12,7 @@ typedef struct
 	int Elf32;
 } HeaderArch;
 
-Elf64_Ehdr get_elf_header(FILE* file_handle)
+Elf64_Ehdr get_elf64_header(FILE* file_handle)
 {
 	Elf64_Ehdr header;
 	fread(&header, 1, sizeof(header), file_handle);
@@ -29,6 +29,25 @@ Elf64_Ehdr get_elf_header(FILE* file_handle)
 
 	return header;
 }
+
+Elf32_Ehdr get_elf32_header(FILE* file_handle)
+{
+        Elf32_Ehdr header;
+        fread(&header, 1, sizeof(header), file_handle);
+
+        if (header.e_ident[EI_MAG0] != 0x7F ||
+            header.e_ident[EI_MAG1] != 'E' ||
+            header.e_ident[EI_MAG2] != 'L' ||
+            header.e_ident[EI_MAG3] != 'F')
+        {
+                raise_elf_error("Not a valid ELF\n");
+                elf_cleanup(file_handle);
+                exit(1);
+        }
+
+        return header;
+}
+
 
 HeaderArch check_if_elf_is_valid(Elf64_Ehdr header)
 {
