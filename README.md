@@ -24,7 +24,7 @@ The ELFDetectiveInstall.sh file is for release downloades or Website Downloaders
 
 <h2>3 Run Executable</h2>
 
-·/ELFDetective /bin/bash --Header
+<code>./build/ELFDetective /bin/bash --Header</code>
 
 
 # Using it
