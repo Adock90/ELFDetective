@@ -41,21 +41,25 @@ int exec_main(int argc, char* argv[])
 	FILE* file_handle_ptr = get_elf_file_handle(argument_parsing.filename);
 	Elf64_Ehdr elf_header = get_elf64_header(file_handle_ptr);
 	arch = check_if_elf_is_valid(elf_header);
-	if (arch.Elf64 == -1 & arch.Elf32 == -1)
+	if (arch.Elf64 == -1 && arch.Elf32 == -1)
 	{
+		elf_cleanup(file_handle_ptr);
 		return EXIT_FAILURE;
 	}
 	if (is_string_in_array("--Header", argument_parsing.fetch_array) == 0)
 	{
-		dump_elf_header_data(elf_header);
+		if (arch.Elf64 == 1 && arch.Elf32 == 0)
+		{
+			dump_elf64_header_data(elf_header);
+		}
 	}
-	if (arch.Elf64 == 1 & arch.Elf32 == 0)
+	if (arch.Elf64 == 1 && arch.Elf32 == 0)
 	{
 		
 		if (is_string_in_array("--Program-Header", argument_parsing.fetch_array) == 0)
 		{
 			Elf64_Phdr* program_header = get_64_bit_program_header(file_handle_ptr, elf_header);
-			dump_64_bit_program_header(program_header);
+			dump_64_bit_program_header(program_header, elf_header.e_phnum);
 			bit_64_program_header_pointer_cleanup(program_header);
 		}
 		if (is_string_in_array("--Section-Headers", argument_parsing.fetch_array) == 0)
@@ -67,15 +71,20 @@ int exec_main(int argc, char* argv[])
 				
 
 	}
-	else if (arch.Elf32 == 1 & arch.Elf64 == 0)
+	else if (arch.Elf32 == 1 && arch.Elf64 == 0)
 	{
 		fseek(file_handle_ptr, 0, SEEK_SET);
 		Elf32_Ehdr bit_32_header = get_elf32_header(file_handle_ptr);
 		
+		if (is_string_in_array("--Header", argument_parsing.fetch_array) == 0)
+		{
+			dump_elf32_header_data(bit_32_header);
+		}
+
 		if (is_string_in_array("--Program-Header", argument_parsing.fetch_array) == 0)
 		{
 			Elf32_Phdr* program_header = get_32_bit_program_header(file_handle_ptr, bit_32_header);
-			dump_32_bit_program_header(program_header);
+			dump_32_bit_program_header(program_header, bit_32_header.e_phnum);
 			bit_32_program_header_pointer_cleanup(program_header);
 		}
 		if (is_string_in_array("--Section-Headers", argument_parsing.fetch_array) == 0)
@@ -90,5 +99,6 @@ int exec_main(int argc, char* argv[])
 	{
 		raise_elf_error("No Valid Elf type value");
 	}
+	elf_cleanup(file_handle_ptr);
 	return EXIT_SUCCESS;
 }

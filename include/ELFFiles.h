@@ -10,6 +10,7 @@
 
 FILE* get_elf_file_handle(char* filename);
 
+size_t get_file_size(FILE* fptr);
 
 void elf_cleanup(FILE* file_handle);
 

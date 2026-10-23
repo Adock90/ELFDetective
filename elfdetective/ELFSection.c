@@ -27,7 +27,7 @@ Elf64_Shdr* parse_64_bit_section_headers(FILE* fptr, Elf64_Ehdr bit_64_header)
 		exit(1);
 	}
 
-	Elf64_Shdr* section_headers = malloc(bit_64_header.e_shentsize * bit_64_header.e_shnum);
+	Elf64_Shdr* section_headers = malloc((size_t)bit_64_header.e_shentsize * (size_t)bit_64_header.e_shnum);
 	if (!section_headers)
 	{
 		raise_elf_error("Failed to alloc memory for 64 bit section headers");
@@ -69,7 +69,7 @@ Elf32_Shdr* parse_32_bit_section_headers(FILE* fptr, Elf32_Ehdr bit_32_header)
 	}
 	
 
-	Elf32_Shdr* section_headers = malloc(bit_32_header.e_shentsize * bit_32_header.e_shnum);
+	Elf32_Shdr* section_headers = malloc((size_t)bit_32_header.e_shentsize * (size_t)bit_32_header.e_shnum);
 	if (!section_headers)
 	{
 		raise_elf_error("Failed to alloc memory for 32 bit section headers");
@@ -138,7 +138,7 @@ void dump_64_bit_section_headers(FILE* fptr, Elf64_Shdr* section_header, uint16_
 	for (int i = 0; i < shnum; i++)
 	{
 		char* name;
-		if (section_header[i].sh_name <= section_header_strings.sh_size)
+		if (section_header[i].sh_name < section_header_strings.sh_size)
 		{
 			name = section_header_string_table + section_header[i].sh_name;
 		}
@@ -146,17 +146,25 @@ void dump_64_bit_section_headers(FILE* fptr, Elf64_Shdr* section_header, uint16_
 		{
 			name = "<invalid>";
 		}
+		
+		printf("\tName of section (sh_name): ");
 
-		printf("\tName of section (sh_name): %s\n", name);
-		printf("\t\tSection Content and Semantics (sh_type): %u\n", section_header[i].sh_type);
-		printf("\t\tSection Attribute Flags (sh_flags): %u\n", section_header[i].sh_flags);
-		printf("\t\tSection Memory Image Address (sh_addr): %u\n", section_header[i].sh_addr);
-		printf("\t\tSection Offset (sh_offset): %u\n", section_header[i].sh_offset);
-		printf("\t\tSection Size (sh_size): %u\n", section_header[i].sh_size);
-		printf("\t\tSection Index Link (sh_link): %u\n", section_header[i].sh_link);
-		printf("\t\tExtra Information (sh_info): %u\n", section_header[i].sh_info);
-		printf("\t\tAddress Alignment Contraints (sh_addralign): %u\n", section_header[i].sh_addralign);
-		printf("\t\tEntry Size (sh_entsize): %u\n", section_header[i].sh_entsize);
+                for (const char* p = name; *p; p++)
+                        putchar(isprint((unsigned char)*p) ? *p : '?');
+
+                printf("\n");
+
+                printf("\t\tSection Content and Semantics (sh_type): 0x%" PRIx32 "\n", section_header[i].sh_type);
+                printf("\t\tSection Attribute Flags (sh_flags): 0x%" PRIx64 "\n", section_header[i].sh_flags);
+                printf("\t\tSection Memory Image Address (sh_addr): 0x%" PRIx64 "\n", section_header[i].sh_addr);
+                printf("\t\tSection Offset (sh_offset): 0x%" PRIx64 "\n", section_header[i].sh_offset);
+                printf("\t\tSection Size (sh_size): 0x%" PRIx64 "\n", section_header[i].sh_size);
+                printf("\t\tSection Index Link (sh_link): 0x%" PRIx32 "\n", section_header[i].sh_link);
+                printf("\t\tExtra Information (sh_info): 0x%" PRIx32 "\n", section_header[i].sh_info);
+                printf("\t\tAddress Alignment Contraints (sh_addralign): 0x%" PRIx64 "\n", section_header[i].sh_addralign);
+                printf("\t\tEntry Size (sh_entsize): 0x%" PRIx64 "\n", section_header[i].sh_entsize);
+
+
 	}
 	free(section_header_string_table);
 }
@@ -207,7 +215,7 @@ void dump_32_bit_section_headers(FILE* fptr, Elf32_Shdr* section_header, uint16_
     	for (int i = 0; i < shnum; i++)
     	{
 	 	char* name;
-                if (section_header[i].sh_name <= section_header_strings.sh_size)
+                if (section_header[i].sh_name < section_header_strings.sh_size)
                 {
                         name = section_header_string_table + section_header[i].sh_name;
                 }
@@ -216,16 +224,21 @@ void dump_32_bit_section_headers(FILE* fptr, Elf32_Shdr* section_header, uint16_
                         name = "<invalid>";
                 }
 
-            	printf("\tName of section (sh_name): %s\n", name);
-            	printf("\t\tSection Content and Semantics (sh_type): %u\n", section_header[i].sh_type);
-            	printf("\t\tSection Attribute Flags (sh_flags): %u\n", section_header[i].sh_flags);
-            	printf("\t\tSection Memory Image Address (sh_addr): %u\n", section_header[i].sh_addr);
-            	printf("\t\tSection Offset (sh_offset): %u\n", section_header[i].sh_offset);
-            	printf("\t\tSection Size (sh_size): %u\n", section_header[i].sh_size);
-            	printf("\t\tSection Index Link (sh_link): %u\n", section_header[i].sh_link);
-            	printf("\t\tExtra Information (sh_info): %u\n", section_header[i].sh_info);
-            	printf("\t\tAddress Alignment Contraints (sh_addralign): %u\n", section_header[i].sh_addralign);
-            	printf("\t\tEntry Size (sh_entsize): %u\n", section_header[i].sh_entsize);
+            	printf("\tName of section (sh_name): ");
+		
+		for (const char* p = name; *p; p++)
+			putchar(isprint((unsigned char)*p) ? *p : '?');
+
+            	printf("\n");
+		printf("\t\tSection Content and Semantics (sh_type): 0x%" PRIx32 "\n", section_header[i].sh_type);
+            	printf("\t\tSection Attribute Flags (sh_flags): 0x%" PRIx32 "\n", section_header[i].sh_flags);
+            	printf("\t\tSection Memory Image Address (sh_addr): 0x%" PRIx32 "\n", section_header[i].sh_addr);
+            	printf("\t\tSection Offset (sh_offset): 0x%" PRIx32 "\n", section_header[i].sh_offset);
+            	printf("\t\tSection Size (sh_size): 0x%" PRIx32 "\n", section_header[i].sh_size);
+            	printf("\t\tSection Index Link (sh_link): 0x%" PRIx32 "\n", section_header[i].sh_link);
+            	printf("\t\tExtra Information (sh_info): 0x%" PRIx32 "\n", section_header[i].sh_info);
+            	printf("\t\tAddress Alignment Contraints (sh_addralign): 0x%" PRIx32 "\n", section_header[i].sh_addralign);
+            	printf("\t\tEntry Size (sh_entsize): 0x%" PRIx32 "\n", section_header[i].sh_entsize);
     	}			
 	free(section_header_string_table);
 }

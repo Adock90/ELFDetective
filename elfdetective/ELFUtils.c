@@ -65,6 +65,11 @@ arg_data parse_args(int argc, char* argv[])
 		{
 			if (is_string_in_array(argv[i], arg_list) == 0)
 			{
+				if (is_string_in_array(argv[i], argument_content.fetch_array) == 0)
+				{
+					continue;
+				}
+
 				argument_content.fetch_array[array_count] = argv[i];
 				array_count++;
 			}
