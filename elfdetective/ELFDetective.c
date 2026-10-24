@@ -20,11 +20,18 @@ void help()
 	      );
 }
 
+void show_version()
+{
+       printf("ELFDetective: Version 1.2\nRun './ELFDetective' for usage\n");
+       exit(EXIT_SUCCESS);
+} 
 
 int exec_main(int argc, char* argv[])
 {
 	HeaderArch arch = {0};
 	arg_data argument_parsing = parse_args(argc, argv);
+ if (is_string_in_array("--version", argv) == 0)
+    show_version();
 	if (argument_parsing.filename == NULL)
 	{
 		raise_elf_error("No file specified");
