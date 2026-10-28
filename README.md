@@ -16,15 +16,15 @@ The ELFDetectiveInstall.sh file is for release downloades or Website Downloaders
 
 <h2>1 Clone or Download as ZIP</h2>
 
-<code>git clone https://github.com/Adock90/ELFDetective</code>
+```git clone https://github.com/Adock90/ELFDetective```
 
 <h2>2 Run build.py</h2>
 
-<code>./build.py</code>
+```./build.py```
 
 <h2>3 Run Executable</h2>
 
-<code>./build/ELFDetective /bin/bash --Header</code>
+```./build/ELFDetective /bin/bash --Header```
 
 
 # Using it
